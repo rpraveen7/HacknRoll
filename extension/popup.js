@@ -1,6 +1,7 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
-  apiUrl: "",
+  appUrl: "http://localhost:3000",
+  apiUrl: "http://localhost:3000/api/summarize",
   apiKey: "",
   sleepThresholdMs: 2000,
   minSleepMs: 5000
@@ -8,6 +9,7 @@ const DEFAULT_SETTINGS = {
 
 const fields = {
   enabled: document.getElementById("enabled"),
+  appUrl: document.getElementById("appUrl"),
   apiUrl: document.getElementById("apiUrl"),
   apiKey: document.getElementById("apiKey"),
   sleepThresholdMs: document.getElementById("sleepThresholdMs"),
@@ -15,10 +17,12 @@ const fields = {
 };
 
 const summariesEl = document.getElementById("summaries");
+const screenshotsEl = document.getElementById("screenshots");
 
 const loadSettings = async () => {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   fields.enabled.checked = stored.enabled;
+  fields.appUrl.value = stored.appUrl;
   fields.apiUrl.value = stored.apiUrl;
   fields.apiKey.value = stored.apiKey;
   fields.sleepThresholdMs.value = stored.sleepThresholdMs;
@@ -28,6 +32,7 @@ const loadSettings = async () => {
 const saveSettings = async () => {
   await chrome.storage.sync.set({
     enabled: fields.enabled.checked,
+    appUrl: fields.appUrl.value.trim(),
     apiUrl: fields.apiUrl.value.trim(),
     apiKey: fields.apiKey.value.trim(),
     sleepThresholdMs: Number(fields.sleepThresholdMs.value),
@@ -38,6 +43,26 @@ const saveSettings = async () => {
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString();
+};
+
+const renderScreenshots = async () => {
+  const { screenshots = [] } = await chrome.storage.local.get({ screenshots: [] });
+  screenshotsEl.innerHTML = "";
+
+  if (screenshots.length === 0) {
+    screenshotsEl.innerHTML = '<p style="font-size:12px; color:#94a3b8;">No snapshots yet.</p>';
+    return;
+  }
+
+  screenshots.slice(0, 6).forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "snapshot";
+    const img = document.createElement("img");
+    img.src = item.dataUrl;
+    img.alt = item.title ? `Snapshot from ${item.title}` : "Snapshot";
+    div.appendChild(img);
+    screenshotsEl.appendChild(div);
+  });
 };
 
 const renderSummaries = async () => {
@@ -62,9 +87,11 @@ const renderSummaries = async () => {
 
 const init = async () => {
   await loadSettings();
+  await renderScreenshots();
   await renderSummaries();
   document.getElementById("save").addEventListener("click", async () => {
     await saveSettings();
+    await renderScreenshots();
     await renderSummaries();
   });
 };

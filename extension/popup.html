@@ -57,6 +57,24 @@
         display: block;
         margin-bottom: 4px;
       }
+      h2 {
+        font-size: 12px;
+        margin: 12px 0 6px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .snapshots {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .snapshot img {
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid #1e293b;
+      }
       .toggle {
         display: flex;
         align-items: center;
@@ -73,8 +91,11 @@
       <label for="enabled">Enable detection</label>
     </div>
 
+    <label for="appUrl">Detector app URL</label>
+    <input type="text" id="appUrl" placeholder="http://localhost:3000" />
+
     <label for="apiUrl">Summary API URL</label>
-    <input type="text" id="apiUrl" placeholder="https://api.example.com/summarize" />
+    <input type="text" id="apiUrl" placeholder="http://localhost:3000/api/summarize" />
 
     <label for="apiKey">API Key</label>
     <input type="password" id="apiKey" placeholder="Optional" />
@@ -92,6 +113,10 @@
 
     <button id="save">Save settings</button>
 
+    <h2>Snapshots</h2>
+    <div id="screenshots" class="snapshots"></div>
+
+    <h2>Summaries</h2>
     <div id="summaries"></div>
 
     <script src="popup.js"></script>

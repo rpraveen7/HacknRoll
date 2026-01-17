@@ -26,3 +26,37 @@
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000)
+
+## Extension Quick Start
+
+1. Load the extension:
+   - Open `chrome://extensions`
+   - Enable Developer mode
+   - Click "Load unpacked" and select the `extension/` folder
+2. Open the extension popup and confirm:
+   - Detector app URL: `http://localhost:3000`
+   - Enable detection: on
+3. Open a video or Zoom tab and allow camera access when prompted.
+
+Notes:
+- Summaries use on-page captions by default. Add a Summary API URL in the popup for audio-based summaries.
+- Snapshots (taunts/filters) are stored locally and shown in the popup.
+
+## OpenAI Summaries (Works without captions)
+
+1. Install dependencies (once):
+   ```bash
+   npm install
+   ```
+2. Set your OpenAI key in `.env.local`:
+   ```bash
+   OPENAI_API_KEY=your_key_here
+   ```
+3. Start the app:
+   ```bash
+   npm run dev
+   ```
+4. In the extension popup, set Summary API URL to:
+   `http://localhost:3000/api/summarize`
+
+If captions are unavailable, the extension will try to capture audio from the video/meeting for the sleep window and send it to OpenAI for transcription + summary.

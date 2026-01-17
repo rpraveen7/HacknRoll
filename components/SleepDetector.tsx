@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 
-const EAR_THRESHOLD = 0.22;
-const SLEEP_DURATION_MS = 1000;
+const DEFAULT_EAR_THRESHOLD = 0.22;
+const DEFAULT_SLEEP_DURATION_MS = 2000;
 
 // Add your filter images here
 const SLEEP_FILTERS = [
@@ -14,7 +14,21 @@ const SLEEP_FILTERS = [
     { name: 'face2', url: '/filters/face2.jpg' },
 ];
 
-const SleepDetector: React.FC = () => {
+type SleepDetectorProps = {
+    sleepDurationMs?: number;
+    earThreshold?: number;
+    embedded?: boolean;
+    onSleepStateChange?: (isAsleep: boolean) => void;
+    onScreenshot?: (dataUrl: string) => void;
+};
+
+const SleepDetector: React.FC<SleepDetectorProps> = ({
+    sleepDurationMs = DEFAULT_SLEEP_DURATION_MS,
+    earThreshold = DEFAULT_EAR_THRESHOLD,
+    embedded = false,
+    onSleepStateChange,
+    onScreenshot
+}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const screenshotCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -106,7 +120,16 @@ const SleepDetector: React.FC = () => {
         // Convert to data URL
         const dataUrl = canvas.toDataURL('image/png');
         setScreenshot(dataUrl);
+        if (onScreenshot) {
+            onScreenshot(dataUrl);
+        }
     };
+
+    useEffect(() => {
+        if (onSleepStateChange) {
+            onSleepStateChange(isAsleep);
+        }
+    }, [isAsleep, onSleepStateChange]);
 
     useEffect(() => {
         if (isAsleep) {
@@ -254,10 +277,10 @@ const SleepDetector: React.FC = () => {
                     const faceBox = getFaceBox(landmarks);
                     setFacePosition(faceBox);
 
-                    if (ear < EAR_THRESHOLD) {
+                    if (ear < earThreshold) {
                         if (lastClosedTimeRef.current === null) {
                             lastClosedTimeRef.current = Date.now();
-                        } else if (Date.now() - lastClosedTimeRef.current > SLEEP_DURATION_MS) {
+                        } else if (Date.now() - lastClosedTimeRef.current > sleepDurationMs) {
                             setIsAsleep(true);
                         }
                     } else {
@@ -278,11 +301,11 @@ const SleepDetector: React.FC = () => {
                 (video.srcObject as MediaStream).getTracks().forEach(track => track.stop());
             }
         };
-    }, [faceLandmarker]);
+    }, [earThreshold, faceLandmarker, sleepDurationMs]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-4">
-            <div className="relative border-4 border-gray-800 rounded-lg overflow-hidden">
+        <div className={embedded ? "relative w-px h-px overflow-hidden" : "flex flex-col items-center justify-center p-4"}>
+            <div className={embedded ? "relative w-px h-px overflow-hidden" : "relative border-4 border-gray-800 rounded-lg overflow-hidden"}>
                 <video
                     ref={videoRef}
                     className="w-[640px] h-[480px] object-cover"
@@ -326,7 +349,7 @@ const SleepDetector: React.FC = () => {
                 )}
 
                 {/* Screenshot Display - Top Right */}
-                {showScreenshot && screenshot && (
+                {!embedded && showScreenshot && screenshot && (
                     <div className="absolute top-4 right-4 border-4 border-yellow-400 rounded-lg shadow-2xl animate-bounce z-20">
                         <img
                             src={screenshot}
@@ -340,15 +363,17 @@ const SleepDetector: React.FC = () => {
                 )}
             </div>
 
-            {isAsleep && (
+            {!embedded && isAsleep && (
                 <div className="mt-6 text-center">
                     <h1 className="text-6xl font-bold text-red-600 animate-bounce">WAKE UP!</h1>
                 </div>
             )}
 
-            <div className="mt-4 text-xl font-semibold">
-                Status: {isAsleep ? <span className="text-red-600 font-bold">SLEEPING!</span> : <span className="text-green-600">Awake</span>}
-            </div>
+            {!embedded && (
+                <div className="mt-4 text-xl font-semibold">
+                    Status: {isAsleep ? <span className="text-red-600 font-bold">SLEEPING!</span> : <span className="text-green-600">Awake</span>}
+                </div>
+            )}
         </div>
     );
 };
