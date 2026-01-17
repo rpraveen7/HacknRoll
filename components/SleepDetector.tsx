@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 
 const EAR_THRESHOLD = 0.22;
-const SLEEP_DURATION_MS = 2000;
+const SLEEP_DURATION_MS = 1000;
 
 const SleepDetector: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
