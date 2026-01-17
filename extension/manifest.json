@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Sleep Detector Companion",
+  "version": "0.1.0",
+  "description": "Detects sleep during lectures, records audio, and requests AI summaries of missed content.",
+  "permissions": ["storage"],
+  "host_permissions": ["*://*/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Sleep Detector"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js", "styles.css"],
+      "matches": ["*://*/*"]
+    }
+  ]
+}

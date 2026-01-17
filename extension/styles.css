@@ -1,0 +1,34 @@
+.sleep-detector-overlay {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999999;
+  font-family: "Inter", system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.sleep-detector-card {
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 12px;
+  width: 260px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.3);
+  pointer-events: auto;
+}
+
+.sleep-detector-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.sleep-detector-status {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.sleep-detector-summary {
+  font-size: 12px;
+  color: #e2e8f0;
+}

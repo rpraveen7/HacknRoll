@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        margin: 0;
+        padding: 16px;
+        width: 320px;
+        background: #0f172a;
+        color: #f8fafc;
+      }
+      h1 {
+        font-size: 16px;
+        margin: 0 0 12px;
+      }
+      label {
+        font-size: 12px;
+        display: block;
+        margin-bottom: 4px;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid #334155;
+        background: #0b1220;
+        color: #f8fafc;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .row input {
+        flex: 1;
+      }
+      button {
+        width: 100%;
+        padding: 8px;
+        border-radius: 6px;
+        border: none;
+        background: #38bdf8;
+        color: #0f172a;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .summary {
+        font-size: 12px;
+        background: #111827;
+        padding: 8px;
+        border-radius: 8px;
+        margin-top: 8px;
+      }
+      .summary strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sleep Detector</h1>
+
+    <div class="toggle">
+      <input type="checkbox" id="enabled" />
+      <label for="enabled">Enable detection</label>
+    </div>
+
+    <label for="apiUrl">Summary API URL</label>
+    <input type="text" id="apiUrl" placeholder="https://api.example.com/summarize" />
+
+    <label for="apiKey">API Key</label>
+    <input type="password" id="apiKey" placeholder="Optional" />
+
+    <div class="row">
+      <div>
+        <label for="sleepThresholdMs">Sleep threshold (ms)</label>
+        <input type="number" id="sleepThresholdMs" min="500" step="500" />
+      </div>
+      <div>
+        <label for="minSleepMs">Minimum sleep (ms)</label>
+        <input type="number" id="minSleepMs" min="1000" step="1000" />
+      </div>
+    </div>
+
+    <button id="save">Save settings</button>
+
+    <div id="summaries"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
