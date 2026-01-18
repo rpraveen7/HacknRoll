@@ -40,6 +40,17 @@ const saveSettings = async () => {
   });
 };
 
+const buildAppLink = (path) => {
+  const base = fields.appUrl.value.trim() || DEFAULT_SETTINGS.appUrl;
+  try {
+    const url = new URL(base);
+    url.pathname = path;
+    return url.toString();
+  } catch (error) {
+    return "";
+  }
+};
+
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString();
@@ -93,6 +104,11 @@ const init = async () => {
     await saveSettings();
     await renderScreenshots();
     await renderSummaries();
+  });
+  document.getElementById("openDashboard").addEventListener("click", () => {
+    const url = buildAppLink("/dashboard");
+    if (!url) return;
+    chrome.tabs.create({ url });
   });
 };
 

@@ -52,10 +52,12 @@ const SleepDetector: React.FC<SleepDetectorProps> = ({
             const osc = audioContextRef.current.createOscillator();
             const gain = audioContextRef.current.createGain();
 
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(440, audioContextRef.current.currentTime);
+            const now = audioContextRef.current.currentTime;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
 
-            gain.gain.setValueAtTime(0.1, audioContextRef.current.currentTime);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.03, now + 0.2);
 
             osc.connect(gain);
             gain.connect(audioContextRef.current.destination);

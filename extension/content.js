@@ -45,6 +45,7 @@ const saveSummary = async (payload) => {
   } catch (error) {
     await chrome.storage.local.set({ summaries: summaries.slice(0, 5) });
   }
+  await postRecord("summary", payload);
 };
 
 const compressDataUrl = (dataUrl, maxSize = 320, quality = 0.7) => new Promise((resolve) => {
@@ -83,6 +84,7 @@ const saveScreenshot = async (payload) => {
   } catch (error) {
     await chrome.storage.local.set({ screenshots: screenshots.slice(0, 3) });
   }
+  await postRecord("screenshot", entry);
 };
 
 const ensureStyles = () => {
@@ -107,6 +109,13 @@ const ensureOverlay = () => {
       <div class="sleep-detector-summary" data-summary></div>
     </div>
   `;
+  overlay.innerHTML = [
+    '<div class="sleep-detector-card">',
+    '  <div class="sleep-detector-title">Sleep Detector</div>',
+    '  <div class="sleep-detector-status" data-status>Initializing...</div>',
+    '  <div class="sleep-detector-summary" data-summary></div>',
+    "</div>"
+  ].join("");
   document.documentElement.appendChild(overlay);
   state.overlay = overlay;
   return overlay;
@@ -135,6 +144,31 @@ const sendRuntimeMessage = (message) => new Promise((resolve) => {
 });
 
 const MAX_AUDIO_BYTES = 24 * 1024 * 1024;
+
+const buildAppEndpoint = (path) => {
+  if (!state.settings.appUrl) return "";
+  try {
+    const url = new URL(state.settings.appUrl);
+    url.pathname = path;
+    return url.toString();
+  } catch (error) {
+    return "";
+  }
+};
+
+const postRecord = async (type, payload) => {
+  const endpoint = buildAppEndpoint("/api/records");
+  if (!endpoint) return;
+  try {
+    await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, payload })
+    });
+  } catch (error) {
+    // ignore transient network errors
+  }
+};
 
 const buildOverlayUrl = () => {
   if (!state.settings.appUrl) return "";

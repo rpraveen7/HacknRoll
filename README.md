@@ -41,6 +41,7 @@ Open [http://localhost:3000](http://localhost:3000)
 Notes:
 - Summaries use on-page captions by default. Add a Summary API URL in the popup for audio-based summaries.
 - Snapshots (taunts/filters) are stored locally and shown in the popup.
+- Open the Sleep Vault dashboard at `http://localhost:3000/dashboard` and game stats at `http://localhost:3000/stats`.
 
 ## OpenAI Summaries (Works without captions)
 
